@@ -73,7 +73,7 @@
     }
 
     /* fieldset + legend es la forma NATIVA de agrupar radios. Sin una sola
-       linea de ARIA, el navegador ya anuncia "Operación, grupo, 1 de 4".
+       linea de ARIA, el navegador ya anuncia "Operación, grupo, 1 de 5".
        Le sacamos los estilos por defecto que son horribles. */
     fieldset { border: none; padding: 0; margin: 0; }
 
@@ -86,17 +86,18 @@
       margin-bottom: .4rem;
     }
 
-    .operaciones { display: grid; grid-template-columns: repeat(4, 1fr); gap: .6rem; }
+    .operaciones { display: grid; grid-template-columns: repeat(5, 1fr); gap: .6rem; }
 
     /* Los radios reales quedan invisibles pero SIGUEN EXISTIENDO y siguen
-       siendo accesibles: se navegan con flechas y los lee un lector de
-       pantalla. Lo que ves y clickeas es el <label> estilado.
+    siendo accesibles: se navegan con flechas y los lee un lector de
+    pantalla. Lo que ves y clickeas es el <label> estilado.
 
-       OJO con el como: NO uses display:none ni width:0/height:0. Ambos sacan
-       el elemento del arbol de accesibilidad y ahi si lo rompiste sin darte
-       cuenta, porque visualmente se ve identico. Este patron de 1px + clip-path
-       es el estandar ("visually hidden") justamente porque deja el elemento
-       renderizado para el navegador pero invisible para el ojo. */
+    OJO con el como: NO uses display:none ni width:0/height:0. Ambos sacan
+    el elemento del arbol de accesibilidad y ahi si lo rompiste sin darte
+    cuenta, porque visualmente se ve identico. Este patron de 1px + clip-path
+    es el estandar ("visually hidden") justamente porque deja el elemento
+    renderizado para el navegador pero invisible para el ojo. */
+
     .operaciones input[type="radio"] {
       position: absolute;
       width: 1px;
@@ -183,8 +184,8 @@
     #resultado.visible { display: block; }
 
     /* Invisible para el ojo, presente para el lector de pantalla.
-       Mismo patron que usamos en los radios de operacion, y por la misma
-       razon: display:none o width:0 lo sacarian del arbol de accesibilidad. */
+    Mismo patron que usamos en los radios de operacion, y por la misma
+    razon: display:none o width:0 lo sacarian del arbol de accesibilidad. */
     .solo-lectores {
       position: absolute;
       width: 1px;
@@ -239,12 +240,12 @@
     }
 
     /* ----------------------------------------------------------------------
-       Historial
-       ----------------------------------------------------------------------
-       El panel entero arranca oculto y solo aparece cuando sabemos si la API
-       tiene base de datos o no. ¿Por que? Porque mostrar un cuadro vacio
-       mientras averiguamos deja al usuario mirando un lugar donde puede que
-       nunca aparezca nada. Primero preguntamos, despues mostramos. */
+      Historial
+      ----------------------------------------------------------------------
+      El panel entero arranca oculto y solo aparece cuando sabemos si la API
+      tiene base de datos o no. ¿Por que? Porque mostrar un cuadro vacio
+      mientras averiguamos deja al usuario mirando un lugar donde puede que
+      nunca aparezca nada. Primero preguntamos, despues mostramos. */
     #panel-historial { display: none; }
     #panel-historial.visible { display: block; }
 
@@ -346,7 +347,7 @@
           </div>
         </div>
 
-        <!-- Radios y no botones sueltos: la operación es UNA sola entre cuatro
+        <!-- Radios y no botones sueltos: la operación es UNA sola entre cinco
              opciones mutuamente excluyentes. Ese es exactamente el input que
              inventaron los radio buttons. Además el navegador garantiza solo
              que nunca haya dos seleccionadas — no escribís código para eso.
@@ -367,41 +368,44 @@
 
             <input type="radio" id="op-div" name="operacion" value="division">
             <label for="op-div"><span class="simbolo">÷</span>División</label>
+
+            <input type="radio" id="op-pot" name="operacion" value="potencia">
+            <label for="op-pot"><span class="simbolo">^</span>Potencia</label>
           </div>
         </fieldset>
 
         <div class="acciones">
           <button type="submit" id="boton">Enviar a la API</button>
 
-          <!-- ACA ESTA LA TRAMPA: type="button".
-               Un <button> adentro de un <form> es type="submit" POR DEFECTO.
-               Si te olvidas de ponerle type="button", este boton envia el
-               formulario en vez de limpiarlo. Y como ademas limpia los campos,
-               el bug se ve rarisimo: manda el calculo Y borra todo.
+<!-- ACA ESTA LA TRAMPA: type="button".
+      Un <button> adentro de un <form> es type="submit" POR DEFECTO.
+      Si te olvidas de ponerle type="button", este boton envia el
+      formulario en vez de limpiarlo. Y como ademas limpia los campos,
+      el bug se ve rarisimo: manda el calculo Y borra todo.
 
-               ¿Y por que no type="reset", que existe y es nativo? Porque reset
-               devuelve el form a sus valores INICIALES (vacios), no a cero, y
-               tampoco esconde el panel de resultado. Nosotros queremos otra
-               cosa, asi que lo hacemos a mano. -->
+      ¿Y por que no type="reset", que existe y es nativo? Porque reset
+      devuelve el form a sus valores INICIALES (vacios), no a cero, y
+      tampoco esconde el panel de resultado. Nosotros queremos otra
+      cosa, asi que lo hacemos a mano. -->
           <button type="button" id="boton-limpiar">Limpiar</button>
         </div>
       </form>
     </div>
 
-    <!-- REGION DE ANUNCIO para lectores de pantalla.
-         Esta siempre en el DOM y siempre "visible" para la tecnologia
-         asistiva, aunque el ojo no la vea. Cada vez que cambia su texto, el
-         lector de pantalla lo lee en voz alta.
+<!-- REGION DE ANUNCIO para lectores de pantalla.
+      Esta siempre en el DOM y siempre "visible" para la tecnologia
+      asistiva, aunque el ojo no la vea. Cada vez que cambia su texto, el
+      lector de pantalla lo lee en voz alta.
 
-         ¿Por que un elemento aparte en lugar de poner aria-live en el panel
-         de resultado? Porque ese panel se oculta con display:none, y un
-         elemento oculto NO esta en el arbol de accesibilidad: los cambios de
-         texto mientras esta oculto no se anuncian. Una region de anuncio
-         tiene que existir y estar presente desde que carga la pagina.
+      ¿Por que un elemento aparte en lugar de poner aria-live en el panel
+      de resultado? Porque ese panel se oculta con display:none, y un
+      elemento oculto NO esta en el arbol de accesibilidad: los cambios de
+      texto mientras esta oculto no se anuncian. Una region de anuncio
+      tiene que existir y estar presente desde que carga la pagina.
 
-         aria-live="polite" = "avisá cuando termines lo que estás diciendo",
-         en vez de interrumpir. Correcto para un resultado que el usuario
-         acaba de pedir. -->
+      aria-live="polite" = "avisá cuando termines lo que estás diciendo",
+      en vez de interrumpir. Correcto para un resultado que el usuario
+      acaba de pedir. -->
     <p id="anuncio" role="status" aria-live="polite" aria-atomic="true" class="solo-lectores"></p>
 
     <div class="panel" id="resultado">
@@ -417,18 +421,18 @@
       </details>
     </div>
 
-    <!-- PANEL DE HISTORIAL.
-         Esto es lo unico que agrega la Clase 5 al front, y fijate lo que NO
-         cambia: ni una linea del formulario, ni del fetch de calcular. La API
-         sumo dos endpoints nuevos y el resto del contrato quedo igual. Eso es
-         lo que se gana cuando front y back estan separados de verdad.
+<!-- PANEL DE HISTORIAL.
+      Esto es lo unico que agrega la Clase 5 al front, y fijate lo que NO
+      cambia: ni una linea del formulario, ni del fetch de calcular. La API
+      sumo dos endpoints nuevos y el resto del contrato quedo igual. Eso es
+      lo que se gana cuando front y back estan separados de verdad.
 
-         El panel puede terminar en tres estados distintos, y los tres son
-         validos:
-           1. La API tiene base -> lista de operaciones.
-           2. La API NO tiene base -> aviso explicando que corre sin historial.
-           3. No se pudo preguntar -> aviso de que no se pudo consultar.
-         Ninguno de los tres rompe la calculadora. -->
+      El panel puede terminar en tres estados distintos, y los tres son
+      validos:
+        1. La API tiene base -> lista de operaciones.
+        2. La API NO tiene base -> aviso explicando que corre sin historial.
+        3. No se pudo preguntar -> aviso de que no se pudo consultar.
+      Ninguno de los tres rompe la calculadora. -->
     <section class="panel" id="panel-historial" aria-labelledby="titulo-historial">
       <div class="encabezado-historial">
         <h2 id="titulo-historial">Últimas operaciones</h2>
@@ -443,7 +447,7 @@
   </div>
 
 <!-- Se carga ANTES del script principal: define window.CONFIG, que la linea
-     de abajo necesita. Si invertis el orden, CONFIG no existe todavia. -->
+    de abajo necesita. Si invertis el orden, CONFIG no existe todavia. -->
 <script src="config.js"></script>
 
 <script>
